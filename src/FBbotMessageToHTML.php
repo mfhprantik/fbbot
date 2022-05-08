@@ -22,17 +22,17 @@ class FBbotMessageToHTML
 		if ($this->message->isTemplate()) {
 			switch ($data['template_type']) {
 				case 'generic':
-					return view('fbbot.generic', compact('data'))->render();
+					return view('fbbot::generic', compact('data'))->render();
 					break;
 				case 'button':
-					return view('fbbot.button', compact('data'))->render();
+					return view('fbbot::button', compact('data'))->render();
 					break;
 				case 'one_time_notif_req':
-					return view('fbbot.notif', compact('data'))->render();
+					return view('fbbot::notif', compact('data'))->render();
 					break;
 			}
 		}
 
-		return view('fbbot.simple', compact('data'))->render();
+		return view('fbbot::simple', compact('data'))->render();
 	}
 }
