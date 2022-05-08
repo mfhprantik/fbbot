@@ -1,0 +1,29 @@
+{
+	"name": "prantik/fbbot",
+	"description": "Helper for creating Facebook Messenger bots",
+	"type": "library",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Mirza Farhan Hasin",
+			"email": "mfhprantik@gmail.com"
+		}
+	],
+	"minimum-stability": "dev",
+	"require": {
+		"php": "^7.3|^8.0",
+		"laravel/framework": "^8.75"
+	},
+	"autoload": {
+		"psr-4": {
+			"Prantik\\FBbot\\": "src/"
+		}
+	},
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Prantik\\FBbot\\FBbotServiceProvider"
+			]
+		}
+	}
+}
