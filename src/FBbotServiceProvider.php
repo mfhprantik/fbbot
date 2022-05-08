@@ -13,7 +13,10 @@ class FBbotServiceProvider extends ServiceProvider
 	 */
 	public function boot()
 	{
-		//
+		$this->loadViewsFrom(__DIR__ . '/views', 'fbbot');
+		$this->publishes([
+			__DIR__ . '/views' => base_path('resources/views/vendor/prantik/fbbot'),
+		]);
 	}
 
 	/**
