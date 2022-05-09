@@ -14,9 +14,16 @@ class FBbotServiceProvider extends ServiceProvider
 	public function boot()
 	{
 		$this->loadViewsFrom(__DIR__ . '/views', 'fbbot');
-		$this->publishes([
-			__DIR__ . '/views' => base_path('resources/views/vendor/prantik/fbbot'),
-		]);
+
+		if ($this->app->runningInConsole()) {
+			$this->publishes([
+				__DIR__ . '/views' => base_path('resources/views/vendor/prantik/fbbot'),
+			], 'views');
+
+			$this->publishes([
+				__DIR__ . '/config.php' => config_path('fbbot.php'),
+			], 'config');
+		}
 	}
 
 	/**
@@ -26,6 +33,6 @@ class FBbotServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
-		//
+		$this->mergeConfigFrom(__DIR__ . '/config.php', 'fbbot');
 	}
 }
