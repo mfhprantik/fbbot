@@ -173,7 +173,7 @@ class FBbot
         return json_decode($response, true);
     }
 
-    public static function say($access_token, $recipient_id, FBbotMessage $message, $notify = false, $recipient_field = 'id')
+    public static function say($access_token, $recipient_id, FBbotMessage $message, $notify = false, $recipient_field = 'id', $tag = null)
     {
         if ($notify) $recipient_field = 'one_time_notif_token';
 
@@ -183,6 +183,11 @@ class FBbot
             ),
             'message' => self::createMessage($message)
         );
+
+        if (!is_null($tag)) {
+            $data['messaging_type'] = 'MESSAGE_TAG';
+            $data['tag'] = $tag;
+        }
 
         $url = config('fbbot.graph_api_endpoint') . 'me/messages?access_token=' . $access_token;
         $response = self::call($url, 'POST', $data);
