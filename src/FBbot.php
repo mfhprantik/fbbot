@@ -52,15 +52,17 @@ class FBbot
         try {
             if (!$this->isReadReceipt() && !$this->isDeliveryReceipt()) {
                 $this->storeMessage();
-                if (count($this->custom_actions) > 0) {
-                    foreach ($this->custom_actions as $action) {
-                        call_user_func(array($this->controller, $action));
-                    }
-                }
 
                 if (!$this->isEcho()) {
                     $this->typesAndWaits();
                     $this->recall();
+
+                    if (count($this->custom_actions) > 0) {
+                        foreach ($this->custom_actions as $action) {
+                            call_user_func(array($this->controller, $action));
+                        }
+                    }
+
                     $this->listen();
                 }
             }
