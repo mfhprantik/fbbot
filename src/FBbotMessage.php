@@ -81,6 +81,7 @@ class FBbotMessage
 			'expires_in_days' => $expires_in_days,
 		);
 		$this->element = 'feedback_screens';
+		$this->data[$this->element] = array();
 	}
 
 	public function setText($text)
