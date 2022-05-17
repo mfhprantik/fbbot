@@ -12,9 +12,8 @@ class FBbotMessageElement
 	 */
 	public function __construct($title = '')
 	{
-		$this->data = array(
-			'title' => $title
-		);
+		if (is_null($title)) $this->data = array();
+		else $this->data = array('title' => $title);
 	}
 
 	public function setTitle($title)
@@ -113,6 +112,23 @@ class FBbotMessageElement
 			$this->data['buttons'][] = $button;
 		}
 
+		return $this;
+	}
+
+	public function addQuestion($id, $type, $title = null)
+	{
+		if (!isset($this->data['questions'])) {
+			$this->data['questions'] = [];
+		}
+
+		$question = array(
+			'id' => $id,
+			'type' => $type
+		);
+
+		if (!is_null($title)) $question['title'] = $title;
+
+		$this->data['questions'][] = $question;
 		return $this;
 	}
 

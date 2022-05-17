@@ -67,6 +67,22 @@ class FBbotMessage
 		);
 	}
 
+	public function useCustomerFeedbackFormTemplate($title, $subtitle, $button_title, $business_privacy_url, $expires_in_days = 1)
+	{
+		$this->template = true;
+		$this->data = array(
+			'template_type' => 'customer_feedback',
+			'title' => $title,
+			'subtitle' => $subtitle,
+			'button_title' => $button_title,
+			'business_privacy' => array(
+				'url' => $business_privacy_url
+			),
+			'expires_in_days' => $expires_in_days,
+		);
+		$this->element = 'feedback_screens';
+	}
+
 	public function setText($text)
 	{
 		$this->data['text'] = $text;
@@ -95,9 +111,14 @@ class FBbotMessage
 				unset($this->data['text']);
 			} elseif ($this->data['template_type'] === 'quick_reply') {
 				unset($this->data['template_type']);
+			} elseif ($this->data['template_type'] === 'customer_feedback') {
+				foreach ($this->data[$this->element] as $key => $element) {
+					unset($element->getData()['title']);
+				}
 			}
 
 			if (isset($this->element)) {
+				unset($this->data['text']);
 				foreach ($this->data[$this->element] as $key => $element) {
 					$this->data[$this->element][$key] = $element->getData();
 				}
