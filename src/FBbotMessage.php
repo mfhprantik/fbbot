@@ -116,10 +116,10 @@ class FBbotMessage
 				foreach ($this->data[$this->element] as $key => $element) {
 					unset($element->getData()['title']);
 				}
+				unset($this->data['text']);
 			}
 
 			if (isset($this->element)) {
-				unset($this->data['text']);
 				foreach ($this->data[$this->element] as $key => $element) {
 					$this->data[$this->element][$key] = $element->getData();
 				}
