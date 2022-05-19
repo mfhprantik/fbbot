@@ -281,6 +281,12 @@ class FBbot
         return strlen($message) ? $message : false;
     }
 
+    public function getMessageId()
+    {
+        if (isset($this->data['entry'][0]['messaging'][0]['message']['mid'])) return $this->data['entry'][0]['messaging'][0]['message']['mid'];
+        return null;
+    }
+
     public function getPayload()
     {
         $payload = '';
