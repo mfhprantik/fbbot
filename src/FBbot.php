@@ -310,6 +310,12 @@ class FBbot
         return [];
     }
 
+    public function getMessageTimestamp()
+    {
+        if (isset($this->data['entry'][0]['messaging'][0]['timestamp'])) return $this->data['entry'][0]['messaging'][0]['timestamp'];
+        return time();
+    }
+
     public function getController()
     {
         return $this->controller;
