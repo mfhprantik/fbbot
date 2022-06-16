@@ -117,8 +117,8 @@ class FBbot
     private function hears($pattern)
     {
         $matches = [];
-        if (is_array($pattern)) $pattern = '/^(?|' . implode('|', $pattern) . ')/si';
-        else $pattern = '/^(?|' . $pattern . ')/si';
+        if (is_array($pattern)) $pattern = '/^(' . implode('|', $pattern) . ')$/si';
+        else $pattern = '/^(' . $pattern . ')$/si';
 
         if ($this->getPayload()) {
             preg_match($pattern, $this->getPayload(), $matches);
