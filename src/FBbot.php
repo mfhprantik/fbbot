@@ -13,7 +13,6 @@ class FBbot
     private $controller;
     private $fallback;
     private $custom_actions;
-    private $store_function;
     private $access_token;
     private $user;
 
@@ -42,30 +41,19 @@ class FBbot
         $this->custom_actions = $custom_actions;
     }
 
-    public function setStoreFunction($store_function)
-    {
-        $this->store_function = $store_function;
-    }
-
     public function run()
     {
         try {
-            if (!$this->isReadReceipt() && !$this->isDeliveryReceipt()) {
-                $this->storeMessage();
+            $this->typesAndWaits();
+            $this->recall();
 
-                if (!$this->isEcho()) {
-                    $this->typesAndWaits();
-                    $this->recall();
-
-                    if (count($this->custom_actions) > 0) {
-                        foreach ($this->custom_actions as $action) {
-                            call_user_func(array($this->controller, $action));
-                        }
-                    }
-
-                    $this->listen();
+            if (count($this->custom_actions) > 0) {
+                foreach ($this->custom_actions as $action) {
+                    call_user_func(array($this->controller, $action));
                 }
             }
+
+            $this->listen();
         } catch (\Exception $e) {
             \Log::info($e);
             self::endConversation();
@@ -92,25 +80,27 @@ class FBbot
 
     private function listen()
     {
-        $fallback = true;
-        foreach ($this->controls as $control) {
-            if ($control[2]) {
-                if ($matches = $this->hears($control[0])) {
-                    $fallback = false;
-                    call_user_func(array($this->controller, $control[1]), $matches);
+        if (!$this->isReadReceipt() && !$this->isDeliveryReceipt() && !$this->isEcho()) {
+            $fallback = true;
+            foreach ($this->controls as $control) {
+                if ($control[2]) {
+                    if ($matches = $this->hears($control[0])) {
+                        $fallback = false;
+                        call_user_func(array($this->controller, $control[1]), $matches);
+                    }
+                } else {
+                    if ($this->hears($control[0])) {
+                        $fallback = false;
+                        call_user_func(array($this->controller, $control[1]));
+                    }
                 }
-            } else {
-                if ($this->hears($control[0])) {
-                    $fallback = false;
-                    call_user_func(array($this->controller, $control[1]));
-                }
+
+                if (!$fallback) break;
             }
 
-            if (!$fallback) break;
-        }
-
-        if ($fallback && $this->fallback) {
-            call_user_func(array($this->controller, $this->fallback));
+            if ($fallback && $this->fallback) {
+                call_user_func(array($this->controller, $this->fallback));
+            }
         }
     }
 
@@ -132,13 +122,6 @@ class FBbot
     public function getData()
     {
         return $this->data;
-    }
-
-    public function storeMessage()
-    {
-        if ($this->store_function) {
-            call_user_func(array($this->controller, $this->store_function));
-        }
     }
 
     public static function createMessage($message)
@@ -218,11 +201,13 @@ class FBbot
 
     public function recall()
     {
-        $key = sha1($this->getUserId());
-        if (Cache::has($key)) {
-            $callback = unserialize(Cache::pull($key))->getClosure();
-            call_user_func($callback, $this);
-            exit;
+        if (!$this->isReadReceipt() && !$this->isDeliveryReceipt() && !$this->isEcho()) {
+            $key = sha1($this->getUserId());
+            if (Cache::has($key)) {
+                $callback = unserialize(Cache::pull($key))->getClosure();
+                call_user_func($callback, $this);
+                exit;
+            }
         }
     }
 
