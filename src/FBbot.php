@@ -15,6 +15,7 @@ class FBbot
     private $custom_actions;
     private $access_token;
     private $user;
+    private $tags;
 
     /**
      * Initialize the bot
@@ -29,6 +30,7 @@ class FBbot
         $this->data = request()->all();
         $this->message_direction = 'incoming';
         $this->store_function = null;
+        $this->tags = ['fbbot'];
     }
 
     public function setFallback($fallback)
@@ -39,6 +41,11 @@ class FBbot
     public function setCustomActions($custom_actions)
     {
         $this->custom_actions = $custom_actions;
+    }
+
+    public function setTags($tags)
+    {
+        $this->tags = array_merge($this->tags, $tags);
     }
 
     public function run()
@@ -188,23 +195,23 @@ class FBbot
             'message' => self::createMessage($message)
         );
 
-        self::remember($this->getUserId(), $callback);
+        self::remember($this->getUserId(), $callback, $this->tags);
         $url = config('fbbot.graph_api_endpoint') . 'me/messages?access_token=' . $this->access_token;
         $response = self::call($url, 'POST', $data);
         return json_decode($response, true);
     }
 
-    public static function remember($user_id, $callback)
+    public static function remember($user_id, $callback, $tags)
     {
-        Cache::put(sha1($user_id), serialize(new SerializableClosure($callback)), 3600);
+        Cache::tags($tags)->put(sha1($user_id), serialize(new SerializableClosure($callback)), 3600);
     }
 
     public function recall()
     {
         if (!$this->isReadReceipt() && !$this->isDeliveryReceipt() && !$this->isEcho()) {
             $key = sha1($this->getUserId());
-            if (Cache::has($key)) {
-                $callback = unserialize(Cache::pull($key))->getClosure();
+            if (Cache::tags($this->tags)->has($key)) {
+                $callback = unserialize(Cache::tags($this->tags)->pull($key))->getClosure();
                 call_user_func($callback, $this);
                 exit;
             }
