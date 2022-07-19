@@ -63,6 +63,8 @@ class FBbot
             $this->listen();
         } catch (\Exception $e) {
             \Log::info($e);
+        } finally {
+            $this->typesAndWaits('off');
             self::endConversation();
         }
     }
@@ -218,13 +220,13 @@ class FBbot
         }
     }
 
-    public function typesAndWaits($time = 0)
+    public function typesAndWaits($action = 'on', $time = 0)
     {
         $data = array(
             'recipient' => array(
                 'id' => $this->getUserId()
             ),
-            'sender_action' => 'typing_on'
+            'sender_action' => 'typing_' . $action
         );
 
         $url = config('fbbot.graph_api_endpoint') . 'me/messages?access_token=' . $this->access_token;
