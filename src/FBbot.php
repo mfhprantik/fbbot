@@ -222,17 +222,19 @@ class FBbot
 
     public function typesAndWaits($action = 'on', $time = 0)
     {
-        $data = array(
-            'recipient' => array(
-                'id' => $this->getUserId()
-            ),
-            'sender_action' => 'typing_' . $action
-        );
+        if (!$this->isReadReceipt() && !$this->isDeliveryReceipt() && !$this->isEcho()) {
+            $data = array(
+                'recipient' => array(
+                    'id' => $this->getUserId()
+                ),
+                'sender_action' => 'typing_' . $action
+            );
 
-        $url = config('fbbot.graph_api_endpoint') . 'me/messages?access_token=' . $this->access_token;
-        $response = self::call($url, 'POST', $data);
-        if ($time > 0) sleep($time);
-        return json_decode($response, true);
+            $url = config('fbbot.graph_api_endpoint') . 'me/messages?access_token=' . $this->access_token;
+            $response = self::call($url, 'POST', $data);
+            if ($time > 0) sleep($time);
+            return json_decode($response, true);
+        }
     }
 
     public static function endConversation()
