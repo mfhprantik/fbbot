@@ -91,7 +91,13 @@ class FBbotMessage
 
 	public function addElement($title = ''): FBbotMessageElement
 	{
-		if (count($this->data[$this->element]) > config('fbbot.max_elements')) throw new \Exception("Maximum " . config('fbbot.max_elements') . " elements per message.");
+		if ($this->data['template_type'] === 'generic' && count($this->data[$this->element]) > config('fbbot.max_elements')) {
+			throw new \Exception("Maximum " . config('fbbot.max_elements') . " elements per message.");
+		} elseif ($this->data['template_type'] === 'button' && count($this->data[$this->element]) > config('fbbot.max_buttons')) {
+			throw new \Exception("Maximum " . config('fbbot.max_buttons') . " buttons per message.");
+		} elseif ($this->data['template_type'] === 'quick_reply' && count($this->data[$this->element]) > config('fbbot.max_quick_replies')) {
+			throw new \Exception("Maximum " . config('fbbot.max_quick_replies') . " quick replies per message.");
+		}
 
 		$element = new FBbotMessageElement($title);
 		$this->data[$this->element][] = $element;
