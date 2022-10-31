@@ -333,6 +333,22 @@ class FBbot
         return isset($this->data['entry'][0]['messaging'][0]['delivery']);
     }
 
+    public static function isMessagingTokenValid($token, $access_token) {
+        $url = config('fbbot.graph_api_endpoint') . 'notification_messages_' . $token . '?access_token=' . $access_token;
+        $response = self::call($url, 'GET');
+        if ($response) {
+            $response = json_decode($response, true);
+            if (isset($response['notification_messages_status']) && $response['notification_messages_status'] == 'STOP NOTIFICATIONS') return false;
+            if (isset($response['token_expiry_timestamp']) && date('Y-m-d', strtotime($response['token_expiry_timestamp'])) < date('Y-m-d')) {
+                return false;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
     public static function call($url, $method, $data = [])
     {
         try {
