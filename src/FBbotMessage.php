@@ -54,6 +54,16 @@ class FBbotMessage
 		return $this;
 	}
 
+	public function useRecurringNotificationTemplate($payload, $frequency, $image_url = null)
+	{
+		$this->data['template_type'] = 'notification_messages';
+		if (isset($image_url)) $this->data['image_url'] = $image_url;
+		$this->data['notification_messages_frequency'] = $frequency;
+		$this->template = true;
+		$this->data['payload'] = $payload;
+		return $this;
+	}
+
 	public function useAttachmentTemplate($type, $url, $isReusable = false)
 	{
 		$this->data = array(

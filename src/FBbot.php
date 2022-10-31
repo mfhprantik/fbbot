@@ -296,6 +296,7 @@ class FBbot
     public function getNotifyToken()
     {
         if (isset($this->data['entry'][0]['messaging'][0]['optin']['one_time_notif_token'])) return $this->data['entry'][0]['messaging'][0]['optin']['one_time_notif_token'];
+        elseif (isset($this->data['entry'][0]['messaging'][0]['optin']['notification_messages_token'])) return $this->data['entry'][0]['messaging'][0]['optin']['notification_messages_token'];
     }
 
     public function getAttachments()
