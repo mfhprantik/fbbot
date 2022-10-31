@@ -123,7 +123,7 @@ class FBbotMessage
 	{
 		if ($this->isTemplate()) {
 			if ($this->data['template_type'] === 'generic') unset($this->data['text']);
-			elseif ($this->data['template_type'] === 'one_time_notif_req') {
+			elseif ($this->data['template_type'] === 'one_time_notif_req' || $this->data['template_type'] === 'notification_messages') {
 				$this->data['title'] = $this->data['text'];
 				unset($this->data['text']);
 			} elseif ($this->data['template_type'] === 'quick_reply') {
