@@ -61,9 +61,9 @@ class FBbot
             }
 
             $this->listen();
+            $this->typesAndWaits('off');
         } catch (\Exception $e) {
             \Log::info($e);
-        } finally {
             $this->typesAndWaits('off');
             self::endConversation();
         }
