@@ -51,7 +51,6 @@ class FBbot
     public function run()
     {
         try {
-            $this->typesAndWaits();
             $this->recall();
 
             if (count($this->custom_actions) > 0) {
@@ -61,10 +60,8 @@ class FBbot
             }
 
             $this->listen();
-            $this->typesAndWaits('off');
         } catch (\Exception $e) {
             \Log::info($e);
-            $this->typesAndWaits('off');
             self::endConversation();
         }
     }
@@ -90,6 +87,7 @@ class FBbot
     private function listen()
     {
         if (!$this->isReadReceipt() && !$this->isDeliveryReceipt() && !$this->isEcho()) {
+            $this->typesAndWaits();
             $fallback = true;
             foreach ($this->controls as $control) {
                 if ($control[2]) {
@@ -110,6 +108,7 @@ class FBbot
             if ($fallback && $this->fallback) {
                 call_user_func(array($this->controller, $this->fallback));
             }
+            $this->typesAndWaits('off');
         }
     }
 
@@ -214,7 +213,9 @@ class FBbot
             $key = sha1($this->getUserId());
             if (Cache::tags($this->tags)->has($key)) {
                 $callback = unserialize(Cache::tags($this->tags)->pull($key))->getClosure();
+                $this->typesAndWaits();
                 call_user_func($callback, $this);
+                $this->typesAndWaits('off');
                 exit;
             }
         }
