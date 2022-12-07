@@ -249,10 +249,24 @@ class FBbot
         if (isset($this->user)) return $this->user;
 
         $id = $this->getUserId($this->data);
-        $url = config('fbbot.graph_api_endpoint') . $id . '?fields=name,first_name,last_name,profile_pic&access_token=' . $this->access_token;
+        $url = config('fbbot.graph_api_endpoint') . $id . '?fields=name,first_name,last_name&access_token=' . $this->access_token;
         $response = self::call($url, 'GET');
         $this->user = json_decode($response, true);
         return $this->user;
+    }
+
+    public function getUserProfilePic()
+    {
+        try {
+            $id = $this->getUserId($this->data);
+            $url = config('fbbot.graph_api_endpoint') . $id . '?fields=profile_pic&access_token=' . $this->access_token;
+            $response = self::call($url, 'GET');
+            $response = json_decode($response, true);
+
+            return $response['profile_pic'];
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     public function getUserId()
