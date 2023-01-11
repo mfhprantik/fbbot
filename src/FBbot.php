@@ -166,10 +166,8 @@ class FBbot
         return json_decode($response, true);
     }
 
-    public static function say($access_token, $recipient_id, FBbotMessage $message, $notify = false, $recipient_field = 'id', $tag = null)
+    public static function say($access_token, $recipient_id, FBbotMessage $message, $recipient_field = 'id', $tag = null)
     {
-        if ($notify) $recipient_field = 'one_time_notif_token';
-
         $data = array(
             'recipient' => array(
                 $recipient_field => $recipient_id
